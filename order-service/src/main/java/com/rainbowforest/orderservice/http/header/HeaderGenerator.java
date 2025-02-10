@@ -21,10 +21,20 @@ public class HeaderGenerator {
 		return httpHeaders;
 	}
 	
-	public HttpHeaders getHeadersForSuccessPostMethod(HttpServletRequest request, Long newResourceId) {
+	public HttpHeaders getHeadersForSuccessPostMethod(HttpServletRequest request, String newResourceId) {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		try {
 			httpHeaders.setLocation(new URI(request.getRequestURI() + "/" + newResourceId));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
+		return httpHeaders;
+	}
+	public HttpHeaders getHeadersForSuccessPostMethodForOrder(HttpServletRequest request, Long cartId) {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		try {
+			httpHeaders.setLocation(new URI(request.getRequestURI() + "/" + cartId));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}

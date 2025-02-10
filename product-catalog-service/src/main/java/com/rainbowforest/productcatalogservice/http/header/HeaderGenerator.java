@@ -16,7 +16,11 @@ public class HeaderGenerator {
 		httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
 		return httpHeaders;
 	}
-	
+	public HttpHeaders getHeadersForSuccessPostMethod() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
+		return httpHeaders;
+	}	
 	public HttpHeaders getHeadersForError() {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("Content-Type", "application/problem+json; charset=UTF-8");

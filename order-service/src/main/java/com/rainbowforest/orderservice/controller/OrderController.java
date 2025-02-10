@@ -33,34 +33,37 @@ public class OrderController {
     private HeaderGenerator headerGenerator;
     
     @PostMapping(value = "/order/{userId}")
-    public ResponseEntity<Order> saveOrder(
-    		@PathVariable("userId") Long userId,
-    		@RequestHeader(value = "Cookie") String cartId,
-    		HttpServletRequest request){
-    	
-        List<Item> cart = cartService.getAllItemsFromCart(cartId);
-        User user = userClient.getUserById(userId);   
-        if(cart != null && user != null) {
-        	Order order = this.createOrder(cart, user);
-        	try{
-                orderService.saveOrder(order);
-                cartService.deleteCart(cartId);
-                return new ResponseEntity<Order>(
-                		order, 
-                		headerGenerator.getHeadersForSuccessPostMethod(request, order.getId()),
-                		HttpStatus.CREATED);
-            }catch (Exception ex){
-                ex.printStackTrace();
-                return new ResponseEntity<Order>(
-                		headerGenerator.getHeadersForError(),
-                		HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-  
-        return new ResponseEntity<Order>(
-        		headerGenerator.getHeadersForError(),
-        		HttpStatus.NOT_FOUND);
+public ResponseEntity<Order> saveOrder(
+        @PathVariable("userId") Long userId,
+        @RequestParam(value = "cartId", required = false) String cartId, // ✅ Get cartId from request parameter
+        HttpServletRequest request) {
+
+    if (cartId == null) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // If no cartId, return 400
     }
+
+    List<Item> cart = cartService.getAllItemsFromCart(cartId);
+    User user = userClient.getUserById(userId);
+
+    if (cart != null && !cart.isEmpty() && user != null) {
+        Order order = this.createOrder(cart, user);
+        try {
+            orderService.saveOrder(order);
+            cartService.deleteCart(cartId);
+            return new ResponseEntity<>(
+                    order, 
+                    headerGenerator.getHeadersForSuccessPostMethodForOrder(request, order.getId()),
+                    HttpStatus.CREATED);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(headerGenerator.getHeadersForError(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    return new ResponseEntity<>(headerGenerator.getHeadersForError(), HttpStatus.NOT_FOUND);
+}
+
+
     
     private Order createOrder(List<Item> cart, User user) {
         Order order = new Order();

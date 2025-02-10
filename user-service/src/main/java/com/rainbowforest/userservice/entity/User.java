@@ -5,28 +5,28 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 @Entity
-@Table (name = "users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "users")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User {
 
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column (name = "user_name", nullable = false, unique = true, length = 50)
-    private String userName;
-    @Column (name = "user_password", nullable = false, length = 50)
-    private String userPassword;
-    @Column (name = "active")
-    private int active;
+	@Column(name = "user_name", nullable = true, unique = true, length = 50)
+	private String userName;
+	@Column(name = "user_password", nullable = true, length = 50)
+	private String userPassword;
+	@Column(name = "active")
+	private int active;
 
-    @OneToOne (cascade = CascadeType.ALL)
-    @JoinColumn (name = "user_details_id")
-    private UserDetails userDetails;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_details_id")
+	private UserDetails userDetails;
 
-    @ManyToOne
-    @JoinColumn (name = "role_id")
-    private UserRole role;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "role_id")
+	private UserRole role;
 
 	public Long getId() {
 		return id;

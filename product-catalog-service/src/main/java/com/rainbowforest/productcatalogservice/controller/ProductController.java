@@ -18,6 +18,20 @@ public class ProductController {
     @Autowired
     private HeaderGenerator headerGenerator;
 
+    @PostMapping(value = "/products")
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        Product createdProduct = productService.addProduct(product);
+        if (createdProduct != null) {
+            return new ResponseEntity<>(
+                    createdProduct,
+                    headerGenerator.getHeadersForSuccessPostMethod(),
+                    HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(
+                headerGenerator.getHeadersForError(),
+                HttpStatus.BAD_REQUEST);
+    }
+    
     @GetMapping (value = "/products")
     public ResponseEntity<List<Product>> getAllProducts(){
         List<Product> products =  productService.getAllProduct();
